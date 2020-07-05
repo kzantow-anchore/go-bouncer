@@ -1,2 +1,44 @@
 # bouncer
-A go license checker (a wrapper for github.com/google/licenseclassifier forked from github.com/google/go-licenses)
+
+![app-pipeline](https://github.com/wagoodman/go-bouncer/workflows/app-pipeline/badge.svg)
+![Go Report Card](https://goreportcard.com/badge/github.com/wagoodman/go-bouncer)
+
+A go dependency license checker.
+
+*This is thin a wrapper for [google's license classifier](github.com/google/licenseclassifier) forked from [go-license](github.com/google/go-licenses) with a few extra options.*
+
+```bash
+# list the licenses of all of your dependencies...
+bouncer list                        # ... from ./go.mod
+bouncer list ~/some/path            # ... from ~/some/path/go.mod
+bouncer list github.com/some/repo   # ... from a remote repo
+
+# pass/fail of user-specified license restrictions (by .bouncer.yaml)
+bouncer check
+bouncer check ~/some/path
+bouncer check github.com/some/repo
+```
+
+The `.bouncer.yaml` can specify a simple allow-list or deny-list license name regex patterns (by SPDX name):
+
+```bash
+permit:
+  - BSD.*
+  - MIT.*
+  - Apache.*
+  - MPL.*
+```
+
+```bash
+forbid:
+  - GPL.*
+```
+
+```bash
+ignore-packages:
+  - github.com/some/repo
+forbid:
+  - GPL.*
+```
+
+Note: either allow or deny lists can be specified, not both.
