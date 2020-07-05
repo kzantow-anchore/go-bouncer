@@ -74,8 +74,8 @@ type googleClassifier struct {
 
 // NewClassifier creates a classifier that requires a specified confidence threshold
 // in order to return a positive license classification.
-func NewClassifier(confidenceThreshold float64) (Classifier, error) {
-	c, err := licenseclassifier.New(confidenceThreshold)
+func NewClassifier(confidenceThreshold float64, options ...licenseclassifier.OptionFunc) (Classifier, error) {
+	c, err := licenseclassifier.New(confidenceThreshold, options...)
 	if err != nil {
 		return nil, err
 	}

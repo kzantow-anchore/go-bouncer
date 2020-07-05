@@ -1,3 +1,5 @@
+// +build tags
+
 // Copyright 2019 Google Inc. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,18 +14,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package testdata
+package tags
 
 import (
-	// This import should be detected by library_test.go. It has to be a
-	// package that isn't in the standard library and has a separate license
-	// file to the one covering the Trillian repository, so that it's detected
-	// as being an external dependency.
-	_ "github.com/google/go-licenses/licenses/testdata/direct"
-
-	// This import should be ignored, since it's an internal dependency.
-	_ "github.com/google/go-licenses/licenses/testdata/internal"
-
-	// This import should be ignored, since it's an standard library package.
-	_ "strings"
+	// This import should be detected as being a transitive dependency of whatever
+	// imports this package.
+	_ "github.com/wagoodman/go-bouncer/bouncer/licenses/testdata/indirect"
 )

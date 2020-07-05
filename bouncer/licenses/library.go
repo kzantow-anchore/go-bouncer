@@ -117,7 +117,7 @@ func Libraries(ctx context.Context, classifier Classifier, importPaths ...string
 		}
 	}
 
-	var libraries []*Library
+	libraries := make([]*Library, 0)
 	for licensePath, pkgs := range pkgsByLicense {
 		if licensePath == "" {
 			// No license for these packages - return each one as a separate library.
