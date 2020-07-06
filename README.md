@@ -5,7 +5,19 @@
 
 A go dependency license checker.
 
-*This is thin a wrapper for [google's license classifier](github.com/google/licenseclassifier) forked from [go-license](github.com/google/go-licenses) with a few extra options.*
+*This is thin a wrapper around [google's license classifier](github.com/google/licenseclassifier) forked from [go-license](github.com/google/go-licenses) with a few extra options.*
+
+## Installation
+
+```bash
+# install the latest version to ./bin
+curl -sSfL https://raw.githubusercontent.com/wagoodman/go-bouncer/master/bouncer.sh | sh 
+
+# install a specific version to another directory
+curl -sSfL https://raw.githubusercontent.com/wagoodman/go-bouncer/master/bouncer.sh | sh -s -- -b ./path/to/bin v1.26.0
+```
+
+## Usage
 
 ```bash
 # list the licenses of all of your dependencies...
