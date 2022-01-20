@@ -3,12 +3,23 @@ release:
 
 builds:
   - binary: bouncer
+    id: go-bouncer_unix
+    env:
+      - CGO_ENABLED=0
+    goos:
+      - darwin
+      - linux
+    goarch:
+      - amd64
+      - arm64
+    ldflags: -s -w -X main.version={{.Version}} -X main.commit={{.Commit}} -X main.buildTime={{.Date}}`.
+
+  - binary: bouncer
+    id: go-bouncer_windows
     env:
       - CGO_ENABLED=0
     goos:
       - windows
-      - darwin
-      - linux
     goarch:
       - amd64
     ldflags: -s -w -X main.version={{.Version}} -X main.commit={{.Commit}} -X main.buildTime={{.Date}}`.

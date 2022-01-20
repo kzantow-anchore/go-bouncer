@@ -56,7 +56,7 @@ bootstrap: ## Download and install all project dependencies (+ prep tooling in t
 		tar -xzvf pkger_0.17.0_Linux_x86_64.tar.gz pkger && \
 		mv pkger $(BIN)
 	# install goreleaser
-	curl -sfL https://install.goreleaser.com/github.com/goreleaser/goreleaser.sh | sh -s -- -b $(BIN) v0.138.0
+	GOBIN=$(BIN) go install github.com/goreleaser/goreleaser@v1.3.1
 
 $(DBASSET):
 	$(call title,Building assets)
@@ -100,24 +100,38 @@ ci-plugs-out-test:
 		-w //src \
 		golang:latest \
 			/bin/bash -x -c "\
-				./dist/go-bouncer_linux_amd64/bouncer version && \
-				./dist/go-bouncer_linux_amd64/bouncer list github.com/wagoodman/go-bouncer && \
-				./dist/go-bouncer_linux_amd64/bouncer check github.com/wagoodman/go-bouncer \
+				./dist/go-bouncer_unix_linux_amd64/bouncer version && \
+				./dist/go-bouncer_unix_linux_amd64/bouncer list github.com/wagoodman/go-bouncer && \
+				./dist/go-bouncer_unix_linux_amd64/bouncer check github.com/wagoodman/go-bouncer \
 			"
 
 ci-test-linux-run:
-	chmod 755 ./dist/go-bouncer_linux_amd64/bouncer && \
-	./dist/go-bouncer_linux_amd64/bouncer version && \
-	./dist/go-bouncer_linux_amd64/bouncer list github.com/wagoodman/go-bouncer
+	chmod 755 ./dist/go-bouncer_unix_linux_amd64/bouncer && \
+	./dist/go-bouncer_unix_linux_amd64/bouncer version && \
+	./dist/go-bouncer_unix_linux_amd64/bouncer list github.com/wagoodman/go-bouncer
+
+ci-test-linux-arm-run:
+	chmod 755 ./dist/go-bouncer_unix_linux_arm64/bouncer && \
+	./dist/go-bouncer_unix_linux_arm64/bouncer version && \
+	./dist/go-bouncer_unix_linux_arm64/bouncer list github.com/wagoodman/go-bouncer
 
 ci-test-mac-run:
-	chmod 755 ./dist/go-bouncer_darwin_amd64/bouncer && \
-	./dist/go-bouncer_darwin_amd64/bouncer version && \
-	./dist/go-bouncer_darwin_amd64/bouncer list github.com/wagoodman/go-bouncer
+	chmod 755 ./dist/go-bouncer_unix_darwin_amd64/bouncer && \
+	./dist/go-bouncer_unix_darwin_amd64/bouncer version && \
+	./dist/go-bouncer_unix_darwin_amd64/bouncer list github.com/wagoodman/go-bouncer
+
+ci-test-mac-arm-run:
+	chmod 755 ./dist/go-bouncer_unix_darwin_arm64/bouncer && \
+	./dist/go-bouncer_unix_darwin_arm64/bouncer version && \
+	./dist/go-bouncer_unix_darwin_arm64/bouncer list github.com/wagoodman/go-bouncer
 
 ci-test-windows-run:
-	./dist/go-bouncer_windows_amd64/bouncer version && \
-	./dist/go-bouncer_windows_amd64/bouncer list github.com/wagoodman/go-bouncer
+	./dist/go-bouncer_windows_windows_amd64/bouncer version && \
+	./dist/go-bouncer_windows_windows_amd64/bouncer list github.com/wagoodman/go-bouncer
 
 ci-release: pkged.go
 	$(BIN)/goreleaser --rm-dist
+
+clean:
+	rm -rf dist
+	rm -rf .tmp

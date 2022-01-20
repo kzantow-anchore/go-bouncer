@@ -2,12 +2,11 @@ name: 'app-pipeline'
 on:
   push:
   pull_request:
-    types: [ opened, reopened ]
 jobs:
   test:
     strategy:
       matrix:
-        go-version: [1.14.x]
+        go-version: [1.17.x]
         platform: [ubuntu-latest, macos-latest] # TODO: add 'windows-latest' support
     runs-on: ${{ matrix.platform }}
     steps:
@@ -44,7 +43,7 @@ jobs:
     steps:
       - uses: actions/setup-go@v1
         with:
-          go-version: '1.14.x'
+          go-version: '1.17.x'
 
       - uses: actions/checkout@v1
 
@@ -76,34 +75,51 @@ jobs:
     needs: [ build-artifacts ]
     runs-on: ubuntu-latest
     steps:
-
       - uses: actions/checkout@master
-
       - uses: actions/download-artifact@master
         with:
           name: artifacts
           path: dist
-
       - name: Test linux run
         run: make ci-test-linux-run
-
       - name: Test docker run
         run: make ci-plugs-out-test
+
+  # test-linux-arm-artifacts:
+  #   needs: [ build-artifacts ]
+  #   runs-on: [ubuntu-latest, ARM64]
+  #   steps:
+  #     - uses: actions/checkout@master
+  #     - uses: actions/download-artifact@master
+  #       with:
+  #         name: artifacts
+  #         path: dist
+  #     - name: Test linux run
+  #       run: make ci-test-linux-arm-run
 
   test-mac-artifacts:
     needs: [ build-artifacts ]
     runs-on: macos-latest
     steps:
-
       - uses: actions/checkout@master
-
       - uses: actions/download-artifact@master
         with:
           name: artifacts
           path: dist
-
       - name: Test darwin run
         run: make ci-test-mac-run
+
+  #  test-mac-arm-artifacts:
+  #    needs: [ build-artifacts ]
+  #    runs-on: [macos-latest, ARM64]
+  #    steps:
+  #      - uses: actions/checkout@master
+  #      - uses: actions/download-artifact@master
+  #        with:
+  #          name: artifacts
+  #          path: dist
+  #      - name: Test darwin run
+  #        run: make ci-test-mac-arm-run
 
   release:
     needs: [ test, build-artifacts, test-linux-artifacts, test-mac-artifacts ] # TODO: add windows support
@@ -113,7 +129,7 @@ jobs:
 
       - uses: actions/setup-go@v1
         with:
-          go-version: '1.14.x'
+          go-version: '1.17.x'
 
       - uses: actions/checkout@v1
 
