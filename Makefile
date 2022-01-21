@@ -18,6 +18,8 @@ SUCCESS := $(BOLD)$(GREEN)
 # the quality gate lower threshold for unit test total % coverage (by function statements)
 COVERAGE_THRESHOLD := 55
 
+RELAESE_CMD=$(BIN)/goreleaser --rm-dist
+
 ifndef TMP
     $(error TMP is not set)
 endif
@@ -52,8 +54,8 @@ bootstrap: ## Download and install all project dependencies (+ prep tooling in t
 	# install golangci-lint
 	curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(BIN) v1.26.0
 	# install pkger
-	cd $(TMP) && curl -sLO https://github.com/markbates/pkger/releases/download/v0.17.0/pkger_0.17.0_Linux_x86_64.tar.gz && \
-		tar -xzvf pkger_0.17.0_Linux_x86_64.tar.gz pkger && \
+	cd $(TMP) && curl -sLO https://github.com/markbates/pkger/releases/download/v0.17.0/pkger_0.17.0_$(shell uname)_x86_64.tar.gz && \
+		tar -xzvf pkger_0.17.0_$(shell uname)_x86_64.tar.gz pkger && \
 		mv pkger $(BIN)
 	# install goreleaser
 	GOBIN=$(BIN) go install github.com/goreleaser/goreleaser@v1.3.1
@@ -87,10 +89,9 @@ unit: ## Run unit tests (with coverage)
 # The following targets are all CI related
 
 ci-build-snapshot-packages: pkged.go
-	$(BIN)/goreleaser \
+	$(RELAESE_CMD) \
 		--snapshot \
-		--skip-publish \
-		--rm-dist
+		--skip-publish 
 
 # note: since google's licenseclassifier requires the go tooling ('go list' from x/tools/go/packages) we need to use a golang image
 ci-plugs-out-test:
@@ -100,34 +101,30 @@ ci-plugs-out-test:
 		-w //src \
 		golang:latest \
 			/bin/bash -x -c "\
-				./dist/go-bouncer_unix_linux_amd64/bouncer version && \
-				./dist/go-bouncer_unix_linux_amd64/bouncer list github.com/wagoodman/go-bouncer && \
-				./dist/go-bouncer_unix_linux_amd64/bouncer check github.com/wagoodman/go-bouncer \
+				./dist/go-bouncer_linux_amd64/bouncer version && \
+				./dist/go-bouncer_linux_amd64/bouncer list github.com/wagoodman/go-bouncer && \
+				./dist/go-bouncer_linux_amd64/bouncer check github.com/wagoodman/go-bouncer \
 			"
 
 ci-test-linux-run:
-	chmod 755 ./dist/go-bouncer_unix_linux_amd64/bouncer && \
-	./dist/go-bouncer_unix_linux_amd64/bouncer version && \
-	./dist/go-bouncer_unix_linux_amd64/bouncer list github.com/wagoodman/go-bouncer
+	chmod 755 ./dist/go-bouncer_linux_amd64/bouncer && \
+	./dist/go-bouncer_linux_amd64/bouncer version && \
+	./dist/go-bouncer_linux_amd64/bouncer list github.com/wagoodman/go-bouncer
 
 ci-test-linux-arm-run:
-	chmod 755 ./dist/go-bouncer_unix_linux_arm64/bouncer && \
-	./dist/go-bouncer_unix_linux_arm64/bouncer version && \
-	./dist/go-bouncer_unix_linux_arm64/bouncer list github.com/wagoodman/go-bouncer
+	chmod 755 ./dist/go-bouncer_linux_arm64/bouncer && \
+	./dist/go-bouncer_linux_arm64/bouncer version && \
+	./dist/go-bouncer_linux_arm64/bouncer list github.com/wagoodman/go-bouncer
 
 ci-test-mac-run:
-	chmod 755 ./dist/go-bouncer_unix_darwin_amd64/bouncer && \
-	./dist/go-bouncer_unix_darwin_amd64/bouncer version && \
-	./dist/go-bouncer_unix_darwin_amd64/bouncer list github.com/wagoodman/go-bouncer
+	chmod 755 ./dist/go-bouncer_darwin_amd64/bouncer && \
+	./dist/go-bouncer_darwin_amd64/bouncer version && \
+	./dist/go-bouncer_darwin_amd64/bouncer list github.com/wagoodman/go-bouncer
 
 ci-test-mac-arm-run:
-	chmod 755 ./dist/go-bouncer_unix_darwin_arm64/bouncer && \
-	./dist/go-bouncer_unix_darwin_arm64/bouncer version && \
-	./dist/go-bouncer_unix_darwin_arm64/bouncer list github.com/wagoodman/go-bouncer
-
-ci-test-windows-run:
-	./dist/go-bouncer_windows_windows_amd64/bouncer version && \
-	./dist/go-bouncer_windows_windows_amd64/bouncer list github.com/wagoodman/go-bouncer
+	chmod 755 ./dist/go-bouncer_darwin_arm64/bouncer && \
+	./dist/go-bouncer_darwin_arm64/bouncer version && \
+	./dist/go-bouncer_darwin_arm64/bouncer list github.com/wagoodman/go-bouncer
 
 ci-release: pkged.go
 	$(BIN)/goreleaser --rm-dist
